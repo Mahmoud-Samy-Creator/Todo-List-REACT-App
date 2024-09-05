@@ -1,0 +1,30 @@
+{
+  "files": {
+    "main.css": "/static/css/main.3f3cfd8c.css",
+    "main.js": "/static/js/main.42aa0a55.js",
+    "static/js/453.80fc6c34.chunk.js": "/static/js/453.80fc6c34.chunk.js",
+    "static/media/Beiruti-Light.ttf": "/static/media/Beiruti-Light.1cb9748a70175b6021a7.ttf",
+    "static/media/Beiruti-SemiBold.ttf": "/static/media/Beiruti-SemiBold.97ec06baff7fb4e57582.ttf",
+    "static/media/Beiruti-Regular.ttf": "/static/media/Beiruti-Regular.6098adb57856524958f6.ttf",
+    "static/media/Beiruti-ExtraBold.ttf": "/static/media/Beiruti-ExtraBold.d3a49177bbc41a260496.ttf",
+    "static/media/Beiruti-Medium.ttf": "/static/media/Beiruti-Medium.8652918f215c7fa9c67e.ttf",
+    "static/media/Beiruti-Bold.ttf": "/static/media/Beiruti-Bold.8695c0ebf6f54c256e7a.ttf",
+    "static/media/Beiruti-Black.ttf": "/static/media/Beiruti-Black.9fdb814df07ee42282be.ttf",
+    "static/media/SUSE-ExtraLight.ttf": "/static/media/SUSE-ExtraLight.84da2991c46a6176d907.ttf",
+    "static/media/SUSE-Thin.ttf": "/static/media/SUSE-Thin.cdbeb309b7394eca25e5.ttf",
+    "static/media/SUSE-Light.ttf": "/static/media/SUSE-Light.ab2eba4ba3cfcfe95a3d.ttf",
+    "static/media/SUSE-SemiBold.ttf": "/static/media/SUSE-SemiBold.fae155babfb5a8bb037f.ttf",
+    "static/media/SUSE-Regular.ttf": "/static/media/SUSE-Regular.5330b1a28f10d7e25116.ttf",
+    "static/media/SUSE-Medium.ttf": "/static/media/SUSE-Medium.8775f1f8842c868e4da6.ttf",
+    "static/media/SUSE-Bold.ttf": "/static/media/SUSE-Bold.213f11b9568875824d3a.ttf",
+    "static/media/SUSE-ExtraBold.ttf": "/static/media/SUSE-ExtraBold.d352a372b7ba395fe544.ttf",
+    "index.html": "/index.html",
+    "main.3f3cfd8c.css.map": "/static/css/main.3f3cfd8c.css.map",
+    "main.42aa0a55.js.map": "/static/js/main.42aa0a55.js.map",
+    "453.80fc6c34.chunk.js.map": "/static/js/453.80fc6c34.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.3f3cfd8c.css",
+    "static/js/main.42aa0a55.js"
+  ]
+}
