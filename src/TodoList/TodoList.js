@@ -54,7 +54,8 @@ export default function TodoList() {
         setTodosList(newStorageRecord);
 
         // Set then application language
-        setLanguage(JSON.parse(localStorage.getItem("lang")))
+        localStorage.getItem("lang") ? setLanguage(JSON.parse(localStorage.getItem("lang"))) : setLanguage(arabicLang) 
+        
     }, [setTodosList, language])
 
     // Handle task input
@@ -93,15 +94,15 @@ export default function TodoList() {
     }
 
     return (
-        <Container dir={language.direction} maxWidth="sm">
+        <Container dir={language?.direction} maxWidth="sm">
             <AddedConfirmation style={visibleMessage} />
             <Card sx={{ minWidth: 400 }} style={cardStyling}>
                 {/* Set application language */}
                 <LanguageToggle setLanguage={setLanguage}/>
                 <CardContent>
                     {/* Header */}
-                    <Typography variant="h2" color="text.secondary" sx={{ fontFamily: language.fontFamilyType }}>
-                        {language.header}
+                    <Typography variant="h2" color="text.secondary" sx={{ fontFamily: language?.fontFamilyType }}>
+                        {language?.header}
                     </Typography>
                     <Divider role="presentation" />
 
@@ -115,13 +116,13 @@ export default function TodoList() {
                         }}
                     >
                         <ToggleButton onClick={(e) => todosRenderToggle(e)} value="all" style={buttonStyle}>
-                            {language.toggleButtons.all}
+                            {language?.toggleButtons.all}
                         </ToggleButton>
                         <ToggleButton onClick={(e) => todosRenderToggle(e)} value="completed" style={buttonStyle}>
-                            {language.toggleButtons.completed
+                            {language?.toggleButtons.completed
                         }</ToggleButton>
                         <ToggleButton onClick={(e) => todosRenderToggle(e)} value="not-completed" style={buttonStyle}>
-                            {language.toggleButtons.notCompleted}
+                            {language?.toggleButtons.notCompleted}
                         </ToggleButton>
                     </ToggleButtonGroup>
 
@@ -133,7 +134,7 @@ export default function TodoList() {
                         <Grid xs={8}>
                             <TextField
                                 id="outlined-basic"
-                                label={language.todoAddForm.label}
+                                label={language?.todoAddForm.label}
                                 variant="outlined"
                                 sx={{ width: "100%" }}
                                 title={taskNameInput}
@@ -152,7 +153,7 @@ export default function TodoList() {
                                 variant="contained"
                                 onClick={handleTodoSubmit}
                                 disabled={taskNameInput.length === 0}
-                            > {language.todoAddForm.button}  </Button>
+                            > {language?.todoAddForm.button}  </Button>
                         </Grid>
                     </Grid>
                 </CardContent>
