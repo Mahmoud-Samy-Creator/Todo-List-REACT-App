@@ -94,9 +94,9 @@ export default function TodoList() {
     }
 
     return (
-        <Container dir={language?.direction} maxWidth="sm">
+        <Container dir={language?.direction} maxWidth="sm" sx={{padding: "0"}}>
             <AddedConfirmation style={visibleMessage} />
-            <Card sx={{ minWidth: 400 }} style={cardStyling}>
+            <Card style={cardStyling} sx={{textAlign: "center" }}>
                 {/* Set application language */}
                 <LanguageToggle setLanguage={setLanguage}/>
                 <CardContent>

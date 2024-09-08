@@ -1,5 +1,5 @@
 // Card styling
-const cardStyling = { textAlign: "center", maxHeight: "80vh", overflowY: "scroll", position: "relative" }
+const cardStyling = {  maxHeight: "80vh", overflowY: "scroll", position: "relative" }
 
 // Styles declarations
 const buttonStyle = {
