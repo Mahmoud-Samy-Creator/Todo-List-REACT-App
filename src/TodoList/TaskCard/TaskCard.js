@@ -133,7 +133,7 @@ export default function TaskCard({ todo, lang }) {
                         autoFocus
                         required
                         margin="dense"
-                        id="name"
+                        id="details"
                         label={lang.todoPropEdit.label.disc}
                         value={todoDetails.disc}
                         onChange={(e) => handleChangeTaskDisc(e)}

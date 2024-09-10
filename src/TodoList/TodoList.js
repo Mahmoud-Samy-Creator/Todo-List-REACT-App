@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useMemo } from 'react';
 import { TodoListContext } from '../contexts/todoListsContext';
 import TaskCard from './TaskCard/TaskCard';
 
@@ -31,8 +31,14 @@ export default function TodoList() {
     const [language, setLanguage] = useState(arabicLang)
 
     // Todos Filteration
-    const completedTodos = todosList?.filter((todo) => todo.isCompleted);
-    const NotCompletedTodos = todosList?.filter((todo) => !todo.isCompleted);
+    
+    const completedTodos = useMemo(() => {
+        return todosList?.filter((todo) => todo.isCompleted);
+    }, [todosList]);
+    const NotCompletedTodos = useMemo(() => {
+        return todosList?.filter((todo) => !todo.isCompleted);
+    }, [todosList])
+
     let renderedTodos = todosList;
 
     if (displayedTodos === "completed") {
@@ -56,7 +62,7 @@ export default function TodoList() {
         // Set then application language
         localStorage.getItem("lang") ? setLanguage(JSON.parse(localStorage.getItem("lang"))) : setLanguage(arabicLang) 
         
-    }, [setTodosList, language])
+    }, [setTodosList])
 
     // Handle task input
     function handleTaskInput(e) {
