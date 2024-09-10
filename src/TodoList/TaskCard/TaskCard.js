@@ -105,13 +105,13 @@ export default function TaskCard({ todo, lang }) {
         <>
             {/* Start Edit task popUp */}
             <Dialog
-            open={showEditPopUp}
-            onClose={() => setShowEditPopUp(false)}
-            sx={{fontFamily: lang.fontFamilyType}}
-            dir={lang.direction}
-            PaperProps={{
-                component: 'form',
-            }}
+                open={showEditPopUp}
+                onClose={() => setShowEditPopUp(false)}
+                sx={{fontFamily: lang.fontFamilyType}}
+                dir={lang.direction}
+                PaperProps={{
+                    component: 'form',
+                }}
             >
                 <DialogTitle sx={generalStyling}>{lang.todoPropEdit.header}</DialogTitle>
                 <DialogContent>
@@ -175,20 +175,20 @@ export default function TaskCard({ todo, lang }) {
             {/* End delete task popUp */}
 
             {/* Start Task card */}
-                <Card sx={{ minWidth: 400, textAlign: "center", background: "#1565c0"}} className="task-card">
+                <Card sx={{ background: "#1565c0", maxWidth: "98%"}} className="task-card">
                         <CardContent>
                             <Typography variant="h5" sx ={{color: "white"}}>
                                 <Grid container spacing={2}>
-                                    <Grid xs={8} style={{ textAlign: "right" }}>
-                                    <Typography variant="h6" sx={{textAlign: lang.textAligning, fontFamily: lang.fontFamilyType,
-                                            textDecoration: todo.isCompleted ? "line-through" : "none"}}>
-                                        {todo.title}
-                                    </Typography>
-                                    <Typography variant="h6" sx={{textAlign: lang.textAligning, fontFamily: lang.fontFamilyType}}>
-                                        {todo.disc}
-                                    </Typography>
+                                    <Grid xs={7} style={{ textAlign: "right" }}>
+                                        <Typography variant="h6" sx={{textAlign: lang.textAligning, fontFamily: lang.fontFamilyType,
+                                                textDecoration: todo.isCompleted ? "line-through" : "none"}}>
+                                            {todo.title}
+                                        </Typography>
+                                        <Typography variant="h6" sx={{textAlign: lang.textAligning, fontFamily: lang.fontFamilyType}}>
+                                            {todo.disc}
+                                        </Typography>
                                     </Grid>
-                                    <Grid xs={4} display="flex" justifyContent="space-around" alignItems="center">
+                                    <Grid xs={5} display="flex" justifyContent="space-around" alignItems="center">
                                         <IconButton className="todo-option" sx={checkOption} onClick={() => handleTodoCheck(todo.id)}>
                                             <CheckIcon />
                                         </IconButton>
