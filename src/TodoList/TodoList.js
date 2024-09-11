@@ -40,6 +40,7 @@ export default function TodoList() {
     })
     const [visibleMessage, setVisibleMessage] = useState(confirmationMessageStyle);
     const [language, setLanguage] = useState(arabicLang);
+    const [toastMessage, setToastMessage] = useState("");
 
 
     // General styling
@@ -84,6 +85,20 @@ export default function TodoList() {
         setTaskInput(e.target.value);
     }
 
+    // Toast message appearance
+    function toastMessageAppear() {
+         // Show the confirmation message with a smooth transition
+        setVisibleMessage(prev => ({ ...prev, visibility: "visible", opacity: 1 }));
+
+        // Hide the confirmation message after 3 seconds with a smooth transition
+        setTimeout(() => {
+            setVisibleMessage(prev => ({ ...prev, opacity: 0 }));
+            setTimeout(() => {
+                setVisibleMessage(prev => ({ ...prev, visibility: "hidden" }));
+            }, 300); // Matches the transition duration
+        }, 3000);
+    }
+
     // Adding a todo to the todos list
     function handleTodoSubmit() {
         const newTodo = {
@@ -96,17 +111,9 @@ export default function TodoList() {
         setTodosList(updatedTodos);
         localStorage.setItem("todos", JSON.stringify(updatedTodos));
         setTaskInput("");
+        setToastMessage(language.todoAddMessage);
 
-        // Show the confirmation message with a smooth transition
-        setVisibleMessage(prev => ({ ...prev, visibility: "visible", opacity: 1 }));
-
-        // Hide the confirmation message after 3 seconds with a smooth transition
-        setTimeout(() => {
-            setVisibleMessage(prev => ({ ...prev, opacity: 0 }));
-            setTimeout(() => {
-                setVisibleMessage(prev => ({ ...prev, visibility: "hidden" }));
-            }, 300); // Matches the transition duration
-        }, 3000);
+        toastMessageAppear();
     }
 
     // handling display todos according to state
@@ -121,14 +128,16 @@ export default function TodoList() {
         setShowDeletePopUp(true)
     }
     function closeDeletePopUp() {
-        setShowDeletePopUp(false)
+        setShowDeletePopUp(false);
     }
     // Delete a todo from the todos list
     function handleDeleteTodo(id) {
-        closeDeletePopUp();
         const newList = todosList.filter((todo) => todo.id !== id);
         localStorage.setItem("todos", JSON.stringify(newList));
         setTodosList(newList);
+        closeDeletePopUp();
+        setToastMessage(language.todoDeletMessage);
+        toastMessageAppear();
     }
     // { ===== End delete todo method =====}
     // Handle show and disappear of Edit popUp
@@ -165,6 +174,8 @@ export default function TodoList() {
         setTodosList(newTodoList);
         localStorage.setItem("todos", JSON.stringify(newTodoList));
         closeEditPopUp();
+        setToastMessage(language.todoEditMessage);
+        toastMessageAppear();
     }
     // { ===== End Edit todo method =====}
 
@@ -252,7 +263,7 @@ export default function TodoList() {
         {/* ======= End Edit dialog ======= */}
         {/* ======= Start Container ======= */}
         <Container dir={language?.direction} maxWidth="sm" sx={{padding: "0"}}>
-            <AddedConfirmation style={visibleMessage} />
+            <ToastMessage style={visibleMessage} message={toastMessage}/>
             <Card style={cardStyling} sx={{textAlign: "center" }}>
                 {/* Set application language */}
                 <LanguageToggle setLanguage={setLanguage}/>
@@ -321,10 +332,10 @@ export default function TodoList() {
     );
 }
 
-function AddedConfirmation({ style }) {
+function ToastMessage({ style, message }) {
     return (
         <div style={style}>
-            <span>تمت اللإضافة بنجاح</span>
+            <span>{message} </span>
         </div>
     );
 }

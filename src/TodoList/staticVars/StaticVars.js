@@ -33,7 +33,10 @@ const arabicLang = {
             close: "إغلاق",
             delete: "تأكيد الحذف"
         }
-    }
+    },
+    todoAddMessage: "تمت الاضافة بنجاح",
+    todoDeletMessage: "تم مسح المهمة بنجاح",
+    todoEditMessage: "تم تعديل المهمة بنجاح"
 }
 
 // 1) English language
@@ -64,13 +67,16 @@ const englishLang = {
         }
     },
     todoDelete: {
-        header: "?! Are you sure you want to delete this to do",
+        header: "Are you sure you want to delete this to do!",
         message: "You can't undo this action",
         buttons: {
             close: "Close",
             delete: "Confirm delete"
         }
-    }
+    },
+    todoAddMessage: "To-do added successfully",
+    todoDeletMessage: "To-do deleted successfully",
+    todoEditMessage: "To-do Edited successfully"
 }
 
 export { arabicLang, englishLang };
