@@ -6,12 +6,15 @@ import TaskCard from './TaskCard/TaskCard';
 import { arabicLang, englishLang } from './staticVars/StaticVars';
 import { buttonStyle, confirmationMessageStyle, cardStyling } from './staticVars/StylingVars';
 
+// Import needed custom functions
+import { ToastMessage } from './ToastMessage/ToastMessage';
+import { LanguageToggle } from './LanguageToggle/LanguageToggle';
+
 // Material UI Components
 import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
-import ButtonGroup from '@mui/material/ButtonGroup';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import ToggleButtonGroup from '@mui/joy/ToggleButtonGroup';
@@ -96,7 +99,7 @@ export default function TodoList() {
             setTimeout(() => {
                 setVisibleMessage(prev => ({ ...prev, visibility: "hidden" }));
             }, 300); // Matches the transition duration
-        }, 3000);
+        }, 800);
     }
 
     // Adding a todo to the todos list
@@ -250,6 +253,24 @@ export default function TodoList() {
                         label={language.todoPropEdit.label.disc}
                         value={todoDetails.disc}
                         onChange={(e) => handleChangeTaskDisc(e)}
+                        // function LanguageToggle({ setLanguage }) {
+                        //     // Handling application language toggle
+                        //     function changeLanguage(lang) {
+                        //         localStorage.setItem("lang", JSON.stringify(lang));
+                        //         setLanguage(lang);
+                        //     }
+                        //     return (
+                        //     <ButtonGroup
+                        //         disableElevation
+                        //         variant="contained"
+                        //         dir="ltr"
+                        //         style={{position: "absolute", right: "0"}}
+                        //     >
+                        //         <Button onClick={() => changeLanguage(englishLang)}>En</Button>
+                        //         <Button onClick={() => changeLanguage(arabicLang)}>Ar</Button>
+                        //     </ButtonGroup>
+                        //     );
+                        // }
                         fullWidth
                         variant="standard"
                         sx={generalStyling}
@@ -266,7 +287,7 @@ export default function TodoList() {
             <ToastMessage style={visibleMessage} message={toastMessage}/>
             <Card style={cardStyling} sx={{textAlign: "center" }}>
                 {/* Set application language */}
-                <LanguageToggle setLanguage={setLanguage}/>
+                <LanguageToggle setLanguage={setLanguage} englishLang={englishLang} arabicLang={arabicLang}/>
                 <CardContent>
                     {/* Header */}
                     <Typography variant="h2" color="text.secondary" sx={{ fontFamily: language?.fontFamilyType }}>
@@ -332,30 +353,3 @@ export default function TodoList() {
     );
 }
 
-function ToastMessage({ style, message }) {
-    return (
-        <div style={style}>
-            <span>{message} </span>
-        </div>
-    );
-}
-
-function LanguageToggle({ setLanguage }) {
-
-    // Handling application language toggle
-    function changeLanguage(lang) {
-        localStorage.setItem("lang", JSON.stringify(lang));
-        setLanguage(lang);
-    }
-    return (
-    <ButtonGroup
-        disableElevation
-        variant="contained"
-        dir="ltr"
-        style={{position: "absolute", right: "0"}}
-    >
-        <Button onClick={() => changeLanguage(englishLang)}>En</Button>
-        <Button onClick={() => changeLanguage(arabicLang)}>Ar</Button>
-    </ButtonGroup>
-    );
-}
