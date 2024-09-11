@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { TodoListContext } from '../../contexts/todoListsContext';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -8,13 +8,6 @@ import IconButton from '@mui/material/IconButton';
 import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import TextField from '@mui/material/TextField';
 
 
 // Styling
@@ -31,19 +24,8 @@ const editOption = {
     color: "#1565c0",
 }
 
-
-
-// localStorage.clear();
-export default function TaskCard({ todo, lang }) {
+export default function TaskCard({ todo, lang, openDeletePopUp, openEditPopUp }) {
     const {todosList, setTodosList} = useContext(TodoListContext);
-    const [showDeletePopUp, setShowDeletePopUp] = useState(false);
-    const [showEditPopUp, setShowEditPopUp] = useState(false);
-    const [todoDetails, setTodoDetails] = useState({
-        name: todo.title,
-        disc: todo.disc
-    })
-    // General styling
-    const generalStyling = {fontFamily: lang.fontFamilyType, width: "100%"}
 
     // Handle check userFeedBack
     const checkColorOnState = todo.isCompleted ? "#65bfb4" : "white";
@@ -56,15 +38,6 @@ export default function TaskCard({ todo, lang }) {
     }
 
     // Action Handlers
-
-    // Delete a todo from the todos list
-    function handleDeleteTodo(id) {
-        setShowDeletePopUp(false);
-        const newList = todosList.filter((todo) => todo.id !== id);
-        localStorage.setItem("todos", JSON.stringify(newList));
-        setTodosList(newList);
-    }
-
     // Handle check a todo as completed
     function handleTodoCheck(id) {
         const newTodoList = todosList.map((todo) => {
@@ -77,102 +50,22 @@ export default function TaskCard({ todo, lang }) {
         setTodosList(newTodoList);
     }
 
-    // Handling changing task name [State]
-    function handleChangeTaskName(e) {
-        setTodoDetails({...todoDetails, name: e.target.value})
+
+    // Handle show and disappear delete pop up
+    function handleShowDeletePopup() {
+        openDeletePopUp(todo)
+    }
+    // Handle show and disappear Edit pop up
+    function handleShowEditPopup() {
+        openEditPopUp(todo)
     }
 
-    // Handling changing task description [State]
-    function handleChangeTaskDisc(e) {
-        setTodoDetails({...todoDetails, disc: e.target.value})
-    }
-
-    // Handle change todo props
-    function handleChangeTaskInfo(id) {
-        const newTodoList = todosList.map((todo) => {
-            if (todo.id === id) {
-                todo.title = todoDetails.name;
-                todo.disc = todoDetails.disc;
-            }
-            return todo;
-        })
-        setTodosList(newTodoList);
-        localStorage.setItem("todos", JSON.stringify(newTodoList));
-        setShowEditPopUp(false);
-    }
-
+    
     return(
         <>
             {/* Start Edit task popUp */}
-            <Dialog
-                open={showEditPopUp}
-                onClose={() => setShowEditPopUp(false)}
-                sx={{fontFamily: lang.fontFamilyType}}
-                dir={lang.direction}
-                PaperProps={{
-                    component: 'form',
-                }}
-            >
-                <DialogTitle sx={generalStyling}>{lang.todoPropEdit.header}</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        autoFocus
-                        required
-                        margin="dense"
-                        id="name"
-                        name="name"
-                        label={lang.todoPropEdit.label.name}
-                        value={todoDetails.name}
-                        onChange={(e) => handleChangeTaskName(e)}
-                        fullWidth
-                        variant="standard"
-                        sx={generalStyling}
-                        
-                    />
-                    <TextField
-                        autoFocus
-                        required
-                        margin="dense"
-                        id="details"
-                        label={lang.todoPropEdit.label.disc}
-                        value={todoDetails.disc}
-                        onChange={(e) => handleChangeTaskDisc(e)}
-                        fullWidth
-                        variant="standard"
-                        sx={generalStyling}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button sx={{fontFamily: lang.fontFamilyType, fontWeight: "bold"}} onClick={() =>setShowEditPopUp(false)}>{lang.todoPropEdit.buttons.close}</Button>
-                    <Button sx={{fontFamily: lang.fontFamilyType, fontWeight: "bold"}} onClick={() => handleChangeTaskInfo(todo.id)}>{lang.todoPropEdit.buttons.edit}</Button>
-                </DialogActions>
-            </Dialog>
+            
             {/* End Edit task popUp */}
-    
-            {/* Start delete task popUp */}
-                <Dialog
-                    open={showDeletePopUp}
-                    sx={{fontFamily: lang.fontFamilyType}}
-                    onClose={() => setShowDeletePopUp(false)}
-                >
-                    <DialogTitle id="alert-dialog-title" sx={{fontFamily: lang.fontFamilyType, textAlign: lang.textAligning}}>
-                        {lang.todoDelete.header}
-                    </DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id="alert-dialog-description" sx={{fontFamily: lang.fontFamilyType, textAlign: lang.textAligning}}>
-                            {lang.todoDelete.message}
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={() => setShowDeletePopUp(false)} sx={{fontFamily: lang.fontFamilyType}}>
-                            {lang.todoDelete.buttons.close}
-                        </Button>
-                        <Button autoFocus onClick={() => handleDeleteTodo(todo.id)} sx={{fontFamily: lang.fontFamilyType}}>
-                            {lang.todoDelete.buttons.delete}
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-            {/* End delete task popUp */}
 
             {/* Start Task card */}
                 <Card sx={{ background: "#1565c0", maxWidth: "98%"}} className="task-card">
@@ -192,10 +85,10 @@ export default function TaskCard({ todo, lang }) {
                                         <IconButton className="todo-option" sx={checkOption} onClick={() => handleTodoCheck(todo.id)}>
                                             <CheckIcon />
                                         </IconButton>
-                                        <IconButton className="todo-option" sx={editOption} onClick={() => setShowEditPopUp(true)}>
+                                        <IconButton className="todo-option" sx={editOption} onClick={handleShowEditPopup}>
                                             <EditIcon />
                                         </IconButton>
-                                        <IconButton className="todo-option" sx={deleteOption} onClick={() => setShowDeletePopUp(true)}>
+                                        <IconButton className="todo-option" sx={deleteOption} onClick={handleShowDeletePopup}>
                                             <DeleteIcon />
                                         </IconButton>
                                     </Grid>

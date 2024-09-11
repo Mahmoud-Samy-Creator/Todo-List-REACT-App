@@ -18,6 +18,11 @@ import ToggleButtonGroup from '@mui/joy/ToggleButtonGroup';
 import { ToggleButton } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import TextField from '@mui/material/TextField';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 // Import Unique IDs
 import { v4 as uuidv4 } from 'uuid';
@@ -25,13 +30,25 @@ import { v4 as uuidv4 } from 'uuid';
 
 export default function TodoList() {
     const { todosList, setTodosList } = useContext(TodoListContext);
+    const [todoFetched, setTodoFetched] = useState(null);
     const [displayedTodos, setDisplayedTodos] = useState("all");
     const [taskNameInput, setTaskInput] = useState("");
+    const [showEditPopUp, setShowEditPopUp] = useState(false);
+    const [todoDetails, setTodoDetails] = useState({
+        name: "",
+        disc: ""
+    })
     const [visibleMessage, setVisibleMessage] = useState(confirmationMessageStyle);
-    const [language, setLanguage] = useState(arabicLang)
+    const [language, setLanguage] = useState(arabicLang);
+
+
+    // General styling
+    const generalStyling = {fontFamily: language.fontFamilyType, width: "100%"}
+
+    // Delete popUp states
+    const [showDeletePopUp, setShowDeletePopUp] = useState(false);
 
     // Todos Filteration
-    
     const completedTodos = useMemo(() => {
         return todosList?.filter((todo) => todo.isCompleted);
     }, [todosList]);
@@ -48,9 +65,7 @@ export default function TodoList() {
     } else {
         renderedTodos = todosList;
     }
-    const todosJSX = renderedTodos?.map((todo) => {
-        return (<TaskCard todo={todo} key={todo.id} lang={language} />);
-    })
+    
 
     // Retrieve record to the state
     useEffect(() => {
@@ -99,7 +114,143 @@ export default function TodoList() {
         setDisplayedTodos(e.target.value);
     }
 
+    // { ===== Start delete todo method =====}
+    // Handle show and disappear of delete popUp
+    function openDeletePopUp(todo) {
+        setTodoFetched(todo)
+        setShowDeletePopUp(true)
+    }
+    function closeDeletePopUp() {
+        setShowDeletePopUp(false)
+    }
+    // Delete a todo from the todos list
+    function handleDeleteTodo(id) {
+        closeDeletePopUp();
+        const newList = todosList.filter((todo) => todo.id !== id);
+        localStorage.setItem("todos", JSON.stringify(newList));
+        setTodosList(newList);
+    }
+    // { ===== End delete todo method =====}
+    // Handle show and disappear of Edit popUp
+    function openEditPopUp(todo) {
+        // alert(todo.title)
+        setTodoDetails({name: todo.title, disc: todo.disc})
+        setTodoFetched(todo)
+        setShowEditPopUp(true)
+    }
+    function closeEditPopUp() {
+        setShowEditPopUp(false)
+    }
+    
+    // { ===== Start Edit todo method =====}
+    // Handling changing task name [State]
+    function handleChangeTaskName(e) {
+        setTodoDetails({...todoDetails, name: e.target.value})
+    }
+
+    // Handling changing task description [State]
+    function handleChangeTaskDisc(e) {
+        setTodoDetails({...todoDetails, disc: e.target.value})
+    }
+
+    // Handle change todo props
+    function handleChangeTaskInfo(id) {
+        const newTodoList = todosList.map((todo) => {
+            if (todo.id === id) {
+                todo.title = todoDetails.name;
+                todo.disc = todoDetails.disc;
+            }
+            return todo;
+        })
+        setTodosList(newTodoList);
+        localStorage.setItem("todos", JSON.stringify(newTodoList));
+        closeEditPopUp();
+    }
+    // { ===== End Edit todo method =====}
+
+    const todosJSX = renderedTodos?.map((todo) => {
+        return (
+            <TaskCard
+                todo={todo}
+                key={todo.id}
+                lang={language}
+                openDeletePopUp={openDeletePopUp}
+                openEditPopUp={openEditPopUp}
+            />);
+    })
     return (
+        <>
+        {/* ======= Start Delete dialog ======= */}
+        <Dialog
+                    open={showDeletePopUp}
+                    sx={{fontFamily: language.fontFamilyType}}
+                    onClose={closeDeletePopUp}
+                >
+                    <DialogTitle id="alert-dialog-title" sx={{fontFamily: language.fontFamilyType, textAlign: language.textAligning}}>
+                        {language.todoDelete.header}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description" sx={{fontFamily: language.fontFamilyType, textAlign: language.textAligning}}>
+                            {language.todoDelete.message}
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={closeDeletePopUp} sx={{fontFamily: language.fontFamilyType}}>
+                            {language.todoDelete.buttons.close}
+                        </Button>
+                        <Button autoFocus onClick={() => handleDeleteTodo(todoFetched.id)} sx={{fontFamily: language.fontFamilyType}}>
+                            {language.todoDelete.buttons.delete}
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+        {/* ======= End Delete dialog ======= */}
+
+        {/* ======= Start Start dialog ======= */}
+        <Dialog
+                open={showEditPopUp}
+                onClose={closeEditPopUp}
+                sx={{fontFamily: language.fontFamilyType}}
+                dir={language.direction}
+                PaperProps={{
+                    component: 'form',
+                }}
+            >
+                <DialogTitle sx={generalStyling}>{language.todoPropEdit.header}</DialogTitle>
+                <DialogContent>
+                    <TextField
+                        autoFocus
+                        required
+                        margin="dense"
+                        id="name"
+                        name="name"
+                        label={language.todoPropEdit.label.name}
+                        value={todoDetails.name}
+                        onChange={(e) => handleChangeTaskName(e)}
+                        fullWidth
+                        variant="standard"
+                        sx={generalStyling}
+                        
+                    />
+                    <TextField
+                        autoFocus
+                        required
+                        margin="dense"
+                        id="details"
+                        label={language.todoPropEdit.label.disc}
+                        value={todoDetails.disc}
+                        onChange={(e) => handleChangeTaskDisc(e)}
+                        fullWidth
+                        variant="standard"
+                        sx={generalStyling}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button sx={{fontFamily: language.fontFamilyType, fontWeight: "bold"}} onClick={closeEditPopUp}>{language.todoPropEdit.buttons.close}</Button>
+                    <Button sx={{fontFamily: language.fontFamilyType, fontWeight: "bold"}} onClick={() => handleChangeTaskInfo(todoFetched.id)}>{language.todoPropEdit.buttons.edit}</Button>
+                </DialogActions>
+            </Dialog>
+        {/* ======= End Edit dialog ======= */}
+        {/* ======= Start Container ======= */}
         <Container dir={language?.direction} maxWidth="sm" sx={{padding: "0"}}>
             <AddedConfirmation style={visibleMessage} />
             <Card style={cardStyling} sx={{textAlign: "center" }}>
@@ -165,6 +316,8 @@ export default function TodoList() {
                 </CardContent>
             </Card>
         </Container>
+        {/* ======= End Container ======= */}
+        </>
     );
 }
 
