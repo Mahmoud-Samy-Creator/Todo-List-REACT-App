@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useMemo, useReducer } from 'react';
+import React, { useState, useEffect, useMemo, useContext } from 'react';
+import { TodoListContext } from '../contexts/todoListsContext';
 import TaskCard from './TaskCard/TaskCard';
-import todosReducer from '../reducers/todosReducer';
+// import todosReducer from '../reducers/todosReducer';
 
 // Import static variables needed
 import { arabicLang, englishLang } from './staticVars/StaticVars';
@@ -29,7 +30,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 export default function TodoList() {
     // Using useReducer for state managment, instead of useState of todoList
-    const [todosList, dispatch] = useReducer(todosReducer, []);
+    // const [todosList, dispatch] = useReducer(todosReducer, []);
+    const {todosList, dispatch} = useContext(TodoListContext);
     const [todoFetched, setTodoFetched] = useState(null);
     const [displayedTodos, setDisplayedTodos] = useState("all");
     const [taskNameInput, setTaskInput] = useState("");
@@ -71,7 +73,7 @@ export default function TodoList() {
         dispatch({type: "getRecords"});
         // Set then application language
         localStorage.getItem("lang") ? setLanguage(JSON.parse(localStorage.getItem("lang"))) : setLanguage(arabicLang);
-    }, [])
+    }, [dispatch])
 
     // Handle task input
     function handleTaskInput(e) {
