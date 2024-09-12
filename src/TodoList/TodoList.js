@@ -1,6 +1,6 @@
-import React, { useState, useContext, useEffect, useMemo } from 'react';
-import { TodoListContext } from '../contexts/todoListsContext';
+import React, { useState, useEffect, useMemo, useReducer } from 'react';
 import TaskCard from './TaskCard/TaskCard';
+import todosReducer from '../reducers/todosReducer';
 
 // Import static variables needed
 import { arabicLang, englishLang } from './staticVars/StaticVars';
@@ -27,12 +27,9 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
-// Import Unique IDs
-import { v4 as uuidv4 } from 'uuid';
-
-
 export default function TodoList() {
-    const { todosList, setTodosList } = useContext(TodoListContext);
+    // Using useReducer for state managment, instead of useState of todoList
+    const [todosList, dispatch] = useReducer(todosReducer, []);
     const [todoFetched, setTodoFetched] = useState(null);
     const [displayedTodos, setDisplayedTodos] = useState("all");
     const [taskNameInput, setTaskInput] = useState("");
@@ -44,7 +41,6 @@ export default function TodoList() {
     const [visibleMessage, setVisibleMessage] = useState(confirmationMessageStyle);
     const [language, setLanguage] = useState(arabicLang);
     const [toastMessage, setToastMessage] = useState("");
-
 
     // General styling
     const generalStyling = {fontFamily: language.fontFamilyType, width: "100%"}
@@ -69,19 +65,13 @@ export default function TodoList() {
     } else {
         renderedTodos = todosList;
     }
-    
 
     // Retrieve record to the state
     useEffect(() => {
-        // Get stored todos
-        const newStorageRecord = JSON.parse(localStorage.getItem("todos"));
-        newStorageRecord ? setTodosList(newStorageRecord) : setTodosList([]);
-        setTodosList(newStorageRecord);
-
+        dispatch({type: "getRecords"});
         // Set then application language
-        localStorage.getItem("lang") ? setLanguage(JSON.parse(localStorage.getItem("lang"))) : setLanguage(arabicLang) 
-        
-    }, [setTodosList])
+        localStorage.getItem("lang") ? setLanguage(JSON.parse(localStorage.getItem("lang"))) : setLanguage(arabicLang);
+    }, [])
 
     // Handle task input
     function handleTaskInput(e) {
@@ -104,18 +94,11 @@ export default function TodoList() {
 
     // Adding a todo to the todos list
     function handleTodoSubmit() {
-        const newTodo = {
-            id: uuidv4(),
-            title: taskNameInput,
-            disc: ``,
-            isCompleted: false,
-        };
-        const updatedTodos = todosList ? [...todosList, newTodo] : [newTodo];
-        setTodosList(updatedTodos);
-        localStorage.setItem("todos", JSON.stringify(updatedTodos));
+        dispatch({type: "added", payload: {
+            newTitle: taskNameInput
+        }})
         setTaskInput("");
         setToastMessage(language.todoAddMessage);
-
         toastMessageAppear();
     }
 
@@ -123,7 +106,6 @@ export default function TodoList() {
     function todosRenderToggle(e) {
         setDisplayedTodos(e.target.value);
     }
-
     // { ===== Start delete todo method =====}
     // Handle show and disappear of delete popUp
     function openDeletePopUp(todo) {
@@ -135,9 +117,9 @@ export default function TodoList() {
     }
     // Delete a todo from the todos list
     function handleDeleteTodo(id) {
-        const newList = todosList.filter((todo) => todo.id !== id);
-        localStorage.setItem("todos", JSON.stringify(newList));
-        setTodosList(newList);
+        dispatch({type: "deleted", payload: {
+            taskId: id
+        }})
         closeDeletePopUp();
         setToastMessage(language.todoDeletMessage);
         toastMessageAppear();
@@ -145,21 +127,18 @@ export default function TodoList() {
     // { ===== End delete todo method =====}
     // Handle show and disappear of Edit popUp
     function openEditPopUp(todo) {
-        // alert(todo.title)
-        setTodoDetails({name: todo.title, disc: todo.disc})
-        setTodoFetched(todo)
-        setShowEditPopUp(true)
+        setTodoDetails({name: todo.title, disc: todo.disc});
+        setTodoFetched(todo);
+        setShowEditPopUp(true);
     }
     function closeEditPopUp() {
         setShowEditPopUp(false)
     }
-    
     // { ===== Start Edit todo method =====}
     // Handling changing task name [State]
     function handleChangeTaskName(e) {
         setTodoDetails({...todoDetails, name: e.target.value})
     }
-
     // Handling changing task description [State]
     function handleChangeTaskDisc(e) {
         setTodoDetails({...todoDetails, disc: e.target.value})
@@ -167,21 +146,16 @@ export default function TodoList() {
 
     // Handle change todo props
     function handleChangeTaskInfo(id) {
-        const newTodoList = todosList.map((todo) => {
-            if (todo.id === id) {
-                todo.title = todoDetails.name;
-                todo.disc = todoDetails.disc;
-            }
-            return todo;
-        })
-        setTodosList(newTodoList);
-        localStorage.setItem("todos", JSON.stringify(newTodoList));
+        dispatch({type: "updated", payload: {
+            taskId: id,
+            newName: todoDetails.name,
+            newDisc: todoDetails.disc
+        }})
         closeEditPopUp();
         setToastMessage(language.todoEditMessage);
         toastMessageAppear();
     }
     // { ===== End Edit todo method =====}
-
     const todosJSX = renderedTodos?.map((todo) => {
         return (
             <TaskCard
@@ -190,6 +164,7 @@ export default function TodoList() {
                 lang={language}
                 openDeletePopUp={openDeletePopUp}
                 openEditPopUp={openEditPopUp}
+                dispatch={dispatch}
             />);
     })
     return (
@@ -209,6 +184,7 @@ export default function TodoList() {
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
+
                         <Button onClick={closeDeletePopUp} sx={{fontFamily: language.fontFamilyType}}>
                             {language.todoDelete.buttons.close}
                         </Button>
@@ -253,24 +229,6 @@ export default function TodoList() {
                         label={language.todoPropEdit.label.disc}
                         value={todoDetails.disc}
                         onChange={(e) => handleChangeTaskDisc(e)}
-                        // function LanguageToggle({ setLanguage }) {
-                        //     // Handling application language toggle
-                        //     function changeLanguage(lang) {
-                        //         localStorage.setItem("lang", JSON.stringify(lang));
-                        //         setLanguage(lang);
-                        //     }
-                        //     return (
-                        //     <ButtonGroup
-                        //         disableElevation
-                        //         variant="contained"
-                        //         dir="ltr"
-                        //         style={{position: "absolute", right: "0"}}
-                        //     >
-                        //         <Button onClick={() => changeLanguage(englishLang)}>En</Button>
-                        //         <Button onClick={() => changeLanguage(arabicLang)}>Ar</Button>
-                        //     </ButtonGroup>
-                        //     );
-                        // }
                         fullWidth
                         variant="standard"
                         sx={generalStyling}

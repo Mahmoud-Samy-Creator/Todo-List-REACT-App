@@ -1,5 +1,3 @@
-import React, { useContext } from 'react';
-import { TodoListContext } from '../../contexts/todoListsContext';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
@@ -24,9 +22,7 @@ const editOption = {
     color: "#1565c0",
 }
 
-export default function TaskCard({ todo, lang, openDeletePopUp, openEditPopUp }) {
-    const {todosList, setTodosList} = useContext(TodoListContext);
-
+export default function TaskCard({ todo, lang, openDeletePopUp, openEditPopUp, dispatch }) {
     // Handle check userFeedBack
     const checkColorOnState = todo.isCompleted ? "#65bfb4" : "white";
     const checkColorOnStateColor = todo.isCompleted ? "white" : "#65bfb4";
@@ -40,16 +36,8 @@ export default function TaskCard({ todo, lang, openDeletePopUp, openEditPopUp })
     // Action Handlers
     // Handle check a todo as completed
     function handleTodoCheck(id) {
-        const newTodoList = todosList.map((todo) => {
-            if (todo.id === id) {
-                todo.isCompleted = !todo.isCompleted;
-            }
-            return todo;
-        })
-        localStorage.setItem("todos", JSON.stringify(newTodoList));
-        setTodosList(newTodoList);
+        dispatch({ type: "markComplete", payload: { taskId: id } });
     }
-
 
     // Handle show and disappear delete pop up
     function handleShowDeletePopup() {
